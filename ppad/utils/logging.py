@@ -26,7 +26,7 @@ logger_initialized = {}
 
 
 @functools.lru_cache()
-def get_logger(name='ppocr', log_file=None, log_level=logging.DEBUG):
+def get_logger(name='ppad', log_file=None, log_level=logging.DEBUG):
     """Initialize and get a logger by name.
     If the logger has not been initialized, this method will initialize the
     logger by adding one or two handlers, otherwise the initialized logger will
