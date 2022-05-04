@@ -1,0 +1,75 @@
+Global:
+  use_gpu: true
+  epoch_num: 100
+  log_smooth_window: 20
+  print_batch_step: 10
+  save_model_dir: ./output/demo
+  save_interval: 1
+  eval_interval: 1
+  cal_metric_during_train: false
+
+Optimizer:
+  name: Adam
+  beta1: 0.9
+  beta2: 0.999
+  lr:
+    name: Cosine
+    learning_rate: 0.001
+    warmup_epoch: 5
+  regularizer:
+    name: L2
+    factor: 3.0e-05
+    clip_norm: 12.0
+
+Architecture:
+  name: Test
+
+Loss:
+  name: Test
+
+PostProcess:
+  name: Test
+
+Metric:
+  name: Test
+
+Train:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data/
+    transforms:
+    - Resize:
+        image_shape: [3, 48, 320]
+    - DecodeImage:
+        img_mode: RGB
+        channel_first: false
+    - KeepKeys:
+        keep_keys:
+        - image
+        - label
+  loader:
+    shuffle: true
+    batch_size_per_card: 128
+    drop_last: true
+    num_workers: 8
+Eval:
+  dataset:
+    name: SimpleDataSet
+    data_dir: ./train_data
+    label_file_list:
+    - ./train_data/val_list.txt
+    transforms:
+    - Resize:
+        image_shape: [3, 48, 320]
+    - DecodeImage:
+        img_mode: RGB
+        channel_first: false
+    - KeepKeys:
+        keep_keys:
+        - image
+        - label
+  loader:
+    shuffle: false
+    drop_last: false
+    batch_size_per_card: 256
+    num_workers: 8
