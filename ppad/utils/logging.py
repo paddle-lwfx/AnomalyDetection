@@ -69,3 +69,23 @@ def get_logger(name='ppad', log_file=None, log_level=logging.DEBUG):
     logger_initialized[name] = True
     logger.propagate = False
     return logger
+
+
+Color = {
+    'RED': '\033[31m',
+    'HEADER': '\033[35m',  # deep purple
+    'PURPLE': '\033[95m',  # purple
+    'OKBLUE': '\033[94m',
+    'OKGREEN': '\033[92m',
+    'WARNING': '\033[93m',
+    'FAIL': '\033[91m',
+    'ENDC': '\033[0m'
+}
+
+
+def coloring(message, color="OKGREEN"):
+    assert color in Color.keys()
+    if os.environ.get('COLORING', True):
+        return Color[color] + str(message) + Color["ENDC"]
+    else:
+        return message

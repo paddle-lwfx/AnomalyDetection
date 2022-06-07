@@ -1,0 +1,21 @@
+MODEL:
+    framework: "Distillation"
+    teacher_model:
+        name: "Vgg16"
+        pretrained: "./vgg16"
+    student_model:
+        name: "small_VGG"
+
+DATASET:
+    train:
+        name: "ImageFolder"
+        normal_class: "capsule"
+        file_path: "~"
+        batch_size: 16
+        num_worker: 8
+    test:
+        name: "ImageFolder"
+        normal_class: "capsule"
+        file_path: "~"
+        batch_size: 16
+        num_worker: 8
