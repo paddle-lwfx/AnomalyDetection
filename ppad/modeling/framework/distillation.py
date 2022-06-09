@@ -7,8 +7,12 @@ from ..builder import build_backbone
 
 @FRAMEWORK.register()
 class Distillation(BaseFramework):
-    def __init__(self, teacher_model, student_model):
-        super(Distillation, self).__init__()
+    def __init__(self,
+                 teacher_model,
+                 student_model,
+                 loss_cfg=dict(
+                     name="MseDirectionLoss", lamda=0.5)):
+        super(Distillation, self).__init__(loss_cfg)
         self.teacher_model = build_backbone(teacher_model)
         self.student_model = build_backbone(student_model)
 
@@ -19,5 +23,4 @@ class Distillation(BaseFramework):
 
         output_pred = self.student_model(X)
         output_real = self.teacher_model(X)
-
-        total_loss = criterion(output_pred, output_real)
+        return self.loss_func(output_pred, output_real)

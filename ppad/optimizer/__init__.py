@@ -23,6 +23,8 @@ __all__ = ['build_optimizer']
 
 
 def build_lr_scheduler(lr_config, epochs, step_each_epoch):
+    if isinstance(lr_config, float):
+        return lr_config
     from . import learning_rate
     lr_config.update({'epochs': epochs, 'step_each_epoch': step_each_epoch})
     lr_name = lr_config.pop('name', 'Const')
@@ -32,7 +34,7 @@ def build_lr_scheduler(lr_config, epochs, step_each_epoch):
 
 def build_optimizer(config, epochs, step_each_epoch, model):
     from . import regularizer, optimizer
-    config = copy.deepcopy(config)
+    config = config.copy()
     # step1 build lr
     lr = build_lr_scheduler(config.pop('lr'), epochs, step_each_epoch)
 
@@ -55,8 +57,12 @@ def build_optimizer(config, epochs, step_each_epoch, model):
         grad_clip = paddle.nn.ClipGradByNorm(clip_norm=clip_norm)
     else:
         grad_clip = None
-    optim = getattr(optimizer, optim_name)(learning_rate=lr,
-                                           weight_decay=reg,
-                                           grad_clip=grad_clip,
-                                           **config)
+    optimizer_setting = {
+        'learning_rate': lr,
+        'weight_decay': reg,
+        'grad_clip': grad_clip,
+        **
+        config
+    }
+    optim = getattr(optimizer, optim_name)(**optimizer_setting)
     return optim(model), lr

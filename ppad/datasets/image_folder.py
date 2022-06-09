@@ -17,10 +17,14 @@ def make_dataset(directory, class_to_idx, extensions=None, is_valid_file=None):
     both_none = extensions is None and is_valid_file is None
     both_something = extensions is not None and is_valid_file is not None
     if both_none or both_something:
-        raise ValueError("Both extensions and is_valid_file cannot be None or not None at the same time")
+        raise ValueError(
+            "Both extensions and is_valid_file cannot be None or not None at the same time"
+        )
     if extensions is not None:
+
         def is_valid_file(x):
             return has_file_allowed_extension(x, extensions)
+
     for target_class in sorted(class_to_idx.keys()):
         class_index = class_to_idx[target_class]
         target_dir = os.path.join(directory, target_class)
@@ -44,16 +48,18 @@ def pil_loader(path):
 
 @DATASETS.register()
 class ImageFolder(Dataset):
-    def __init__(self, root, transform=None, localization_test=False):
+    def __init__(self, dataset_root, transform=None, localization_test=False):
         extensions = ('.jpg', '.jpeg', '.png')
-        self.root = root
+        self.root = dataset_root
         self.transform = transform
-        classes, class_to_idx = self._find_classes(self.root, localization_test)
+        classes, class_to_idx = self._find_classes(self.root,
+                                                   localization_test)
         samples = make_dataset(self.root, class_to_idx, extensions)
         if len(samples) == 0:
             msg = "Found 0 files in subfolders of: {}\n".format(self.root)
             if extensions is not None:
-                msg += "Supported extensions are: {}".format(",".join(extensions))
+                msg += "Supported extensions are: {}".format(",".join(
+                    extensions))
             raise RuntimeError(msg)
 
         self.loader = pil_loader
@@ -66,7 +72,10 @@ class ImageFolder(Dataset):
 
     def _find_classes(self, dir, localization_test=False):
         if localization_test:
-            classes = [d.name for d in os.scandir(dir) if d.is_dir() and d.name != "good"]
+            classes = [
+                d.name for d in os.scandir(dir)
+                if d.is_dir() and d.name != "good"
+            ]
         else:
             classes = [d.name for d in os.scandir(dir) if d.is_dir()]
         classes.sort()

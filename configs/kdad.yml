@@ -1,3 +1,4 @@
+epochs: 601
 MODEL:
     framework: "Distillation"
     teacher_model:
@@ -5,17 +6,30 @@ MODEL:
         pretrained: "./vgg16"
     student_model:
         name: "small_VGG"
+    loss_cfg:
+        name: "MseDirectionLoss"
+        lamda: 0.5
 
 DATASET:
+    batch_size: 64
+    num_worker: 8
+    normal_class: "capsule"
     train:
         name: "ImageFolder"
-        normal_class: "capsule"
-        file_path: "~"
-        batch_size: 16
-        num_worker: 8
+        dataset_root: "/Users/alex/Downloads/MVTec/capsule/train"
     test:
         name: "ImageFolder"
-        normal_class: "capsule"
-        file_path: "~"
-        batch_size: 16
-        num_worker: 8
+        dataset_root: "/Users/alex/Downloads/MVTec/capsule/test"
+
+PIPELINE:
+    train:
+        transform:
+            - Resize:
+                  size: [128, 128]
+                  interpolation: "bilinear"
+
+OPTIMIZER: #OPTIMIZER field
+    name: "Adam"
+    beta1: 0.9
+    beta2: 0.999
+    lr: 1e-3

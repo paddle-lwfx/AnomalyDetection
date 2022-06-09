@@ -3,3 +3,4 @@ from .registry import Registry
 from .config import ArgsParser, get_config
 from .logging import get_logger
 from .save_load import load_pretrained_params
+from .record import build_record, log_batch, log_epoch

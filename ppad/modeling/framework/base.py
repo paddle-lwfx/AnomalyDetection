@@ -1,10 +1,14 @@
 from abc import abstractmethod
+
 import paddle.nn as nn
+
+from ..builder import build_loss
 
 
 class BaseFramework(nn.Layer):
-    def __init__(self):
+    def __init__(self, loss_cfg=dict(name="MseDirectionLoss", lamda=0.5)):
         super(BaseFramework, self).__init__()
+        self.loss_func = build_loss(loss_cfg)
         pass
 
     def forward(self, data_batch, mode='infer'):
