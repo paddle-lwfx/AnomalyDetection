@@ -20,7 +20,7 @@ def main():
         np.random.seed(seed)
         paddle.seed(seed)
 
-    train_model(cfg)
+    train_model(cfg, args.validate)
     pass
 
 

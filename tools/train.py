@@ -1,15 +1,19 @@
+import os
 import time
 
+import paddle
 from paddle.optimizer.lr import LRScheduler
 
-from ppad.utils import get_logger, build_record, log_batch
+from ppad.utils import get_logger, build_record, log_batch, log_epoch
 from ppad.modeling import build_model
 from ppad.datasets import build_dataset, build_dataloader
 from ppad.optimizer import build_optimizer
 
 
-def train_model(cfg):
+def train_model(cfg, validate=False):
     logger = get_logger()
+    model_name = cfg.model_name
+    output_dir = cfg.get("output_dir", f"./output/{model_name}")
 
     model = build_model(cfg.MODEL)
 
@@ -20,12 +24,21 @@ def train_model(cfg):
         batch_size=batch_size,
         num_workers=cfg.DATASET.num_worker,
         shuffle=True,
-        drop_last=False, )
+        drop_last=False)
     train_loader = build_dataloader(train_dataset, **train_dataloader_setting)
+
+    if validate:
+        valid_dataset = build_dataset((cfg.DATASET.valid, cfg.PIPELINE.valid))
+        valid_dataloader_setting = dict(
+            batch_size=batch_size,
+            num_workers=cfg.DATASET.num_worker,
+            shuffle=False,
+            drop_last=False)
+        valid_loader = build_dataloader(valid_dataset, **valid_dataloader_setting)
 
     optimizer, lr = build_optimizer(cfg.OPTIMIZER, cfg.epochs,
                                     len(train_loader), model)
-
+    best = 0.0
     for epoch in range(0, cfg.epochs):
         model.train()
         record_list = build_record(cfg.MODEL)
@@ -48,4 +61,22 @@ def train_model(cfg):
                 log_batch(record_list, i, epoch + 1, cfg.epochs, "train", ips)
 
             tic = time.time()
-            pass
+
+        ips = "avg_ips: {:.5f} instance/sec.".format(
+            batch_size * record_list["batch_time"].count /
+            record_list["batch_time"].sum)
+        log_epoch(record_list, epoch + 1, "train", ips)
+
+        if validate and (epoch % cfg.get("val_interval", 1) == 0
+                         or epoch == cfg.epochs - 1):
+            if cfg.MODEL.framework in ['Distillation']:
+                eval_res = model.detection_test(valid_loader, cfg)
+            if eval_res > best:
+                best = eval_res
+                paddle.save(model.state_dict(), os.path.join(output_dir, f'{model_name}_best_model.pdparams'))
+                paddle.save(optimizer.state_dict(), os.path.join(output_dir, f'{model_name}_best_model.pdopt'))
+                logger.info("Already save the best model")
+
+        if epoch % cfg.get("save_interval", 1) == 0 or epoch == cfg.epochs - 1:
+            paddle.save(model.state_dict(), os.path.join(output_dir, f'{model_name}_epoch_{epoch}_model.pdparams'))
+            paddle.save(optimizer.state_dict(), os.path.join(output_dir, f'{model_name}_epoch_{epoch}_model.pdopt'))

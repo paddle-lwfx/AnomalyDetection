@@ -43,6 +43,10 @@ class ArgsParser(ArgumentParser):
             type=int,
             default=1234,
             help='fixed all random seeds when the program is running')
+        self.add_argument(
+            '--validate',
+            action='store_true',
+            help='whether to evaluate the checkpoint during training')
 
     def parse_args(self, argv=None):
         args = super(ArgsParser, self).parse_args(argv)
