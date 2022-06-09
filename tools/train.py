@@ -54,6 +54,7 @@ def train_model(cfg, validate=False):
 
             record_list['lr'].update(optimizer.get_lr(), batch_size)
             record_list['batch_time'].update(time.time() - tic)
+            record_list['loss'].update(loss, batch_size)
 
             if i % cfg.get("log_interval", 10) == 0:
                 ips = "ips: {:.5f} instance/sec.".format(
@@ -71,6 +72,7 @@ def train_model(cfg, validate=False):
                          or epoch == cfg.epochs - 1):
             if cfg.MODEL.framework in ['Distillation']:
                 eval_res = model.detection_test(valid_loader, cfg)
+                logger.info(f"[Eval] epoch:{epoch} AUC: {eval_res}")
             if eval_res > best:
                 best = eval_res
                 paddle.save(model.state_dict(), os.path.join(output_dir, f'{model_name}_best_model.pdparams'))
