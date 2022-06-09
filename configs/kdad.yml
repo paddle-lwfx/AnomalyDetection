@@ -43,3 +43,4 @@ OPTIMIZER: #OPTIMIZER field
 
 val_interval: 10
 save_interval: 10
+direction_only: False

@@ -29,9 +29,9 @@ class Distillation(BaseFramework):
 
     def detection_test(self, test_dataloader, config):
         normal_class = config.DATASET.normal_class
-        lamda = config.MODEL.loss_cfg
+        lamda = config.MODEL.loss_cfg.lamda
         dataset_name = config.DATASET.dataset_name
-        direction_only = False
+        direction_only = config.direction_only
 
         if dataset_name != "mvtec":
             target_class = normal_class
