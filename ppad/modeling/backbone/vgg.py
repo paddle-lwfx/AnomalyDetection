@@ -2,27 +2,14 @@ import paddle
 import paddle.nn as nn
 
 from typing import Union, List, Dict, Any, cast
-from ...utils import load_pretrained_params
-from ..registry import BACKBONES
-from ..param_init import xavier_uniform_
+from ppad.utils import load_pretrained_params
+from ppad.modeling.registry import BACKBONES
+from ppad.modeling.param_init import xavier_uniform_
 
 
 __all__ = [
-    'VGG', 'vgg11', 'vgg11_bn', 'vgg13', 'vgg13_bn', 'vgg16', 'vgg16_bn',
-    'vgg19_bn', 'vgg19',
+    'VGG', 'VGG16'
 ]
-
-
-model_urls = {
-    'vgg11': 'https://download.pytorch.org/models/vgg11-8a719046.pth',
-    'vgg13': 'https://download.pytorch.org/models/vgg13-19584684.pth',
-    'vgg16': 'https://download.pytorch.org/models/vgg16-397923af.pth',
-    'vgg19': 'https://download.pytorch.org/models/vgg19-dcbb9e9d.pth',
-    'vgg11_bn': 'https://download.pytorch.org/models/vgg11_bn-6002323d.pth',
-    'vgg13_bn': 'https://download.pytorch.org/models/vgg13_bn-abd245e5.pth',
-    'vgg16_bn': 'https://download.pytorch.org/models/vgg16_bn-6c64b313.pth',
-    'vgg19_bn': 'https://download.pytorch.org/models/vgg19_bn-c79401a0.pth',
-}
 
 
 class VGG(nn.Layer):
@@ -93,100 +80,12 @@ def _vgg(arch: str, cfg: str, batch_norm: bool, pretrained: str, progress: bool,
     return model
 
 
-def vgg11(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 11-layer model (configuration "A") from
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg11', 'A', False, pretrained, progress, **kwargs)
-
-
-def vgg11_bn(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 11-layer model (configuration "A") with batch normalization
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg11_bn', 'A', True, pretrained, progress, **kwargs)
-
-
-def vgg13(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 13-layer model (configuration "B")
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg13', 'B', False, pretrained, progress, **kwargs)
-
-
-def vgg13_bn(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 13-layer model (configuration "B") with batch normalization
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg13_bn', 'B', True, pretrained, progress, **kwargs)
-
-
-def vgg16(pretrained: str = None, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 16-layer model (configuration "D")
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (str): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg16', 'D', False, pretrained, progress, **kwargs)
-
-
-def vgg16_bn(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 16-layer model (configuration "D") with batch normalization
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg16_bn', 'D', True, pretrained, progress, **kwargs)
-
-
-def vgg19(pretrained: str = None, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 19-layer model (configuration "E")
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg19', 'E', False, pretrained, progress, **kwargs)
-
-
-def vgg19_bn(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> VGG:
-    r"""VGG 19-layer model (configuration 'E') with batch normalization
-    `"Very Deep Convolutional Networks For Large-Scale Image Recognition" <https://arxiv.org/pdf/1409.1556.pdf>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-    """
-    return _vgg('vgg19_bn', 'E', True, pretrained, progress, **kwargs)
-
-
 @BACKBONES.register()
-class Vgg16(nn.Layer):
+class VGG16(nn.Layer):
     def __init__(self, pretrained):
-        super(Vgg16, self).__init__()
+        super(VGG16, self).__init__()
 
-        features = list(vgg16(pretrained).features)
+        features = list(_vgg('vgg16', 'D', False, pretrained, True).features)
 
         self.features = nn.LayerList(features)
         self.features.eval()
@@ -202,13 +101,13 @@ class Vgg16(nn.Layer):
 
 
 @BACKBONES.register()
-class small_VGG(nn.Layer):
+class KDADStudentVGG(nn.Layer):
     '''
     VGG model
     '''
 
     def __init__(self):
-        super(small_VGG, self).__init__()
+        super(KDADStudentVGG, self).__init__()
         cfg = [16, 16, 'M', 16, 128, 'M', 16, 16, 256, 'M', 16, 16, 512, 'M', 16, 16, 512, 'M']
         self.features = self.make_layers(cfg, use_bias=False, batch_norm=True)
 

@@ -1,1 +1,1 @@
-from .vgg import Vgg16, small_VGG
+from ppad.modeling.backbone.vgg import VGG16, KDADStudentVGG

@@ -19,7 +19,7 @@ from __future__ import print_function
 import os
 import yaml
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
-from .logging import get_logger, coloring
+from ppad.utils.logging import get_logger
 
 logger = get_logger()
 
@@ -167,18 +167,14 @@ def print_dict(d, delimiter=0):
     placeholder = "-" * 60
     for k, v in sorted(d.items()):
         if isinstance(v, dict):
-            logger.info("{}{} : ".format(delimiter * " ", coloring(k,
-                                                                   "HEADER")))
+            logger.info("{}{} : ".format(delimiter * " ", k))
             print_dict(v, delimiter + 4)
         elif isinstance(v, list) and len(v) >= 1 and isinstance(v[0], dict):
-            logger.info("{}{} : ".format(delimiter * " ",
-                                         coloring(str(k), "HEADER")))
+            logger.info("{}{} : ".format(delimiter * " ", str(k)))
             for value in v:
                 print_dict(value, delimiter + 4)
         else:
-            logger.info("{}{} : {}".format(delimiter * " ",
-                                           coloring(k, "HEADER"),
-                                           coloring(v, "OKGREEN")))
+            logger.info("{}{} : {}".format(delimiter * " ", k, v))
 
         if k.isupper():
             logger.info(placeholder)

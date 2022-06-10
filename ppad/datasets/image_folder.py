@@ -1,10 +1,9 @@
 import os
 
-import numpy as np
 from paddle.io import Dataset
 from PIL import Image
 
-from .registry import DATASETS
+from ppad.datasets.registry import DATASETS
 
 
 def has_file_allowed_extension(filename, extensions):
@@ -94,9 +93,6 @@ class ImageFolder(Dataset):
         sample = self.loader(path)
         if self.transform is not None:
             sample = self.transform(sample)
-        sample = np.array(sample)
-        sample = np.transpose(sample, [2, 0, 1]).astype('float32')
-        sample /= 255.0
 
         return sample, target
 

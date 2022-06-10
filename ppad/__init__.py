@@ -1,5 +1,6 @@
-from .modeling.framework import Distillation
-from .modeling.backbone import Vgg16, small_VGG
-from .datasets import ImageFolder
-from .datasets.pipelines import Resize
-from .modeling.losses import MseDirectionLoss
+from ppad.modeling.framework import KDAD
+from ppad.modeling.backbone import VGG16, KDADStudentVGG
+from ppad.datasets import ImageFolder
+from ppad.datasets.pipelines import Resize
+from ppad.modeling.losses import MseDirectionLoss
+from ppad.engine import train_model

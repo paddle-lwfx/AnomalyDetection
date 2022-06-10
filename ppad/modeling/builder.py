@@ -13,8 +13,8 @@
 # limitations under the License.
 
 
-from ..utils import build
-from .registry import (BACKBONES, HEADS, LOSSES, FRAMEWORK)
+from ppad.utils import build
+from ppad.modeling.registry import (BACKBONES, HEADS, LOSSES, FRAMEWORK)
 
 
 def build_backbone(cfg):

@@ -22,11 +22,15 @@ def build(cfg, registry, key='name'):
     Returns:
         obj: The constructed object.
     """
-
-    assert isinstance(cfg, dict) and key in cfg
-
     cfg_copy = cfg.copy()
-    obj_type = cfg_copy.pop(key)
+    if key:
+        assert isinstance(cfg, dict) and key in cfg
+        obj_type = cfg_copy.pop(key)
+    else:
+        obj_type = list(cfg_copy.keys())[0]
+        cfg_copy = cfg_copy[obj_type]
+        if not cfg_copy:
+            cfg_copy = {}
 
     obj_cls = registry.get(obj_type)
     if obj_cls is None:

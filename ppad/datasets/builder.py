@@ -11,17 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import signal
-import os
 import paddle
 from paddle.io import DataLoader, DistributedBatchSampler
-from .registry import DATASETS, PIPELINES
-from ..utils.build_utils import build
-from .pipelines.transforms import Compose
-import numpy as np
+from ppad.datasets.registry import DATASETS, PIPELINES
+from ppad.utils.build_utils import build
+from ppad.datasets.pipelines.transforms import Compose
 
 
-def build_pipeline(cfg):
+def build_transform(cfg):
     """Build pipeline.
     Args:
         cfg (dict): root config dict.
@@ -31,7 +28,7 @@ def build_pipeline(cfg):
     return Compose(cfg)
 
 
-def build_dataset(cfg):
+def build_dataset(cfg_dataset):
     """Build dataset.
     Args:
         cfg (dict): root config dict.
@@ -39,9 +36,7 @@ def build_dataset(cfg):
     Returns:
         dataset: dataset.
     """
-    #XXX: ugly code here!
-    cfg_dataset, cfg_pipeline = cfg
-    cfg_dataset.transform = build_pipeline(cfg_pipeline)
+    cfg_dataset.transform = build_transform(cfg_dataset.transform)
     dataset = build(cfg_dataset, DATASETS, key="name")
     return dataset
 

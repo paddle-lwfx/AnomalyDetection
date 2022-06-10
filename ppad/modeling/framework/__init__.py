@@ -1,1 +1,1 @@
-from .distillation import Distillation
+from ppad.modeling.framework.kdad import KDAD

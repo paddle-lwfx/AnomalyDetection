@@ -2,19 +2,19 @@ import paddle
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 
-from .base import BaseFramework
-from ..registry import FRAMEWORK
-from ..builder import build_backbone
+from ppad.modeling.framework.base import BaseFramework
+from ppad.modeling.registry import FRAMEWORK
+from ppad.modeling.builder import build_backbone
 
 
 @FRAMEWORK.register()
-class Distillation(BaseFramework):
+class KDAD(BaseFramework):
     def __init__(self,
                  teacher_model,
                  student_model,
                  loss_cfg=dict(
                      name="MseDirectionLoss", lamda=0.5)):
-        super(Distillation, self).__init__(loss_cfg)
+        super(KDAD, self).__init__(loss_cfg)
         self.teacher_model = build_backbone(teacher_model)
         self.student_model = build_backbone(student_model)
 
@@ -28,20 +28,20 @@ class Distillation(BaseFramework):
         return self.loss_func(output_pred, output_real)
 
     def detection_test(self, test_dataloader, config):
-        normal_class = config.DATASET.normal_class
-        lamda = config.MODEL.loss_cfg.lamda
-        dataset_name = config.DATASET.dataset_name
-        direction_only = config.direction_only
+        normal_class = config.Dataset.normal_class
+        lamda = config.Model.loss_cfg.lamda
+        dataset_name = config.Dataset.dataset_name
+        direction_only = config.Global.direction_only
 
-        if dataset_name != "mvtec":
-            target_class = normal_class
-        else:
+        if dataset_name == "mvtec":
             mvtec_good_dict = {'bottle': 3, 'cable': 5, 'capsule': 2, 'carpet': 2,
                                'grid': 3, 'hazelnut': 2, 'leather': 4, 'metal_nut': 3, 'pill': 5,
                                'screw': 0, 'tile': 2, 'toothbrush': 1, 'transistor': 3, 'wood': 2,
                                'zipper': 4
                                }
             target_class = mvtec_good_dict[normal_class]
+        else:
+            target_class = normal_class
 
         similarity_loss = paddle.nn.CosineSimilarity()
         label_score = []
@@ -82,3 +82,6 @@ class Distillation(BaseFramework):
         roc_auc = auc(fpr, tpr)
         roc_auc = round(roc_auc, 4)
         return roc_auc
+
+    def parameters(self, include_sublayers=True):
+        return self.student_model.parameters(include_sublayers)

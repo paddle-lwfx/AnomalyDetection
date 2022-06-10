@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .builder import build_model, build_head, build_backbone
+from ppad.modeling.builder import build_model, build_head, build_backbone

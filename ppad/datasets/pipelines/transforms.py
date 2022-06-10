@@ -1,9 +1,10 @@
 import traceback
 
+import numpy as np
 from paddle.vision.transforms import Resize as p_Resize
 
-from ..registry import PIPELINES
-from ..builder import build
+from ppad.datasets.registry import PIPELINES
+from ppad.datasets.builder import build
 
 
 @PIPELINES.register()
@@ -32,9 +33,9 @@ class Compose(object):
     def __init__(self, pipelines):
         # assert isinstance(pipelines, Sequence)
         self.pipelines = []
-        for p in pipelines.values():
+        for p in pipelines:
             if isinstance(p, dict):
-                p = build(p, PIPELINES)
+                p = build(p, PIPELINES, key=None)
                 self.pipelines.append(p)
             elif isinstance(p, list):
                 for t in p:
@@ -73,3 +74,12 @@ class Resize:
 
     def __call__(self, img):
         return self.resize(img)
+
+
+@PIPELINES.register()
+class ToTensor:
+    def __call__(self, img):
+        img = np.array(img)
+        img = np.transpose(img, [2, 0, 1]).astype('float32')
+        img /= 255.0
+        return img

@@ -16,7 +16,7 @@ from collections import OrderedDict
 
 import paddle
 
-from .logging import coloring, get_logger
+from ppad.utils.logging import get_logger
 
 logger = get_logger("ppad")
 
@@ -91,10 +91,11 @@ def log_batch(metric_list, batch_id, epoch_id, total_epoch, mode, ips):
     step_str = "{:s} step:{:<4d}".format(mode, batch_id)
 
     logger.info("{:s} {:s} {:s} {:s} {:s} {}".format(
-        coloring(epoch_str, "HEADER") if batch_id == 0 else epoch_str,
-        coloring(step_str, "PURPLE"),
-        coloring(metric_str, 'OKGREEN'),
-        coloring(batch_cost, "OKGREEN"), coloring(reader_cost, 'OKGREEN'),
+        epoch_str if batch_id == 0 else epoch_str,
+        step_str,
+        metric_str,
+        batch_cost,
+        reader_cost,
         ips))
 
 
@@ -112,8 +113,10 @@ def log_epoch(metric_list, epoch, mode, ips):
     end_epoch_str = "END epoch:{:<3d}".format(epoch)
 
     logger.info("{:s} {:s} {:s} {:s} {:s} {:s} {}".format(
-        coloring(end_epoch_str, "RED"),
-        coloring(mode, "PURPLE"),
-        coloring(metric_str, "OKGREEN"),
-        coloring(batch_cost, "OKGREEN"),
-        coloring(reader_cost, "OKGREEN"), coloring(batch_sum, "OKGREEN"), ips))
+        end_epoch_str,
+        mode,
+        metric_str,
+        batch_cost,
+        reader_cost,
+        batch_sum,
+        ips))

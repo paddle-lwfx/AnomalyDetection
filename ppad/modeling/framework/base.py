@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 import paddle.nn as nn
 
-from ..builder import build_loss
+from ppad.modeling.builder import build_loss
 
 
 class BaseFramework(nn.Layer):
@@ -14,8 +14,8 @@ class BaseFramework(nn.Layer):
     def forward(self, data_batch, mode='infer'):
         if mode == 'train':
             return self.train_step(data_batch)
-        elif mode == 'valid':
-            return self.val_step(data_batch)
+        elif mode == 'eval':
+            return self.eval_step(data_batch)
         elif mode == 'test':
             return self.test_step(data_batch)
         elif mode == 'infer':
@@ -28,7 +28,7 @@ class BaseFramework(nn.Layer):
         raise NotImplementedError
 
     @abstractmethod
-    def val_step(self, data_batch, **kwargs):
+    def eval_step(self, data_batch, **kwargs):
         """Validating step.
         """
         raise NotImplementedError
