@@ -91,12 +91,8 @@ def log_batch(metric_list, batch_id, epoch_id, total_epoch, mode, ips):
     step_str = "{:s} step:{:<4d}".format(mode, batch_id)
 
     logger.info("{:s} {:s} {:s} {:s} {:s} {}".format(
-        epoch_str if batch_id == 0 else epoch_str,
-        step_str,
-        metric_str,
-        batch_cost,
-        reader_cost,
-        ips))
+        epoch_str if batch_id == 0 else epoch_str, step_str, metric_str,
+        batch_cost, reader_cost, ips))
 
 
 def log_epoch(metric_list, epoch, mode, ips):
@@ -113,10 +109,5 @@ def log_epoch(metric_list, epoch, mode, ips):
     end_epoch_str = "END epoch:{:<3d}".format(epoch)
 
     logger.info("{:s} {:s} {:s} {:s} {:s} {:s} {}".format(
-        end_epoch_str,
-        mode,
-        metric_str,
-        batch_cost,
-        reader_cost,
-        batch_sum,
+        end_epoch_str, mode, metric_str, batch_cost, reader_cost, batch_sum,
         ips))

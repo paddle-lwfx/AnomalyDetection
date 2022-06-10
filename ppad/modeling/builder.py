@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from ppad.utils import build
 from ppad.modeling.registry import (BACKBONES, HEADS, LOSSES, FRAMEWORK)
 

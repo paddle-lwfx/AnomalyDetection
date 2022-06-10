@@ -69,17 +69,27 @@ def train_model(cfg, validate=False):
             record_list["batch_time"].sum)
         log_epoch(record_list, epoch + 1, "train", ips)
 
-        if validate and (epoch % cfg.get("val_interval", 1) == 0
-                         or epoch == cfg.epochs - 1):
+        if validate and (epoch % cfg.get("val_interval", 1) == 0 or
+                         epoch == cfg.epochs - 1):
             if cfg.Model.framework in ['KDAD']:
                 eval_res = model.detection_test(eval_loader, cfg)
                 logger.info(f"[Eval] epoch:{epoch} AUC: {eval_res}")
             if eval_res > best:
                 best = eval_res
-                paddle.save(model.state_dict(), os.path.join(output_dir, f'{model_name}_best_model.pdparams'))
-                paddle.save(optimizer.state_dict(), os.path.join(output_dir, f'{model_name}_best_model.pdopt'))
+                paddle.save(model.state_dict(),
+                            os.path.join(output_dir,
+                                         f'{model_name}_best_model.pdparams'))
+                paddle.save(optimizer.state_dict(),
+                            os.path.join(output_dir,
+                                         f'{model_name}_best_model.pdopt'))
                 logger.info("Already save the best model")
 
         if epoch % cfg.get("save_interval", 1) == 0 or epoch == cfg.epochs - 1:
-            paddle.save(model.state_dict(), os.path.join(output_dir, f'{model_name}_epoch_{epoch}_model.pdparams'))
-            paddle.save(optimizer.state_dict(), os.path.join(output_dir, f'{model_name}_epoch_{epoch}_model.pdopt'))
+            paddle.save(
+                model.state_dict(),
+                os.path.join(output_dir,
+                             f'{model_name}_epoch_{epoch}_model.pdparams'))
+            paddle.save(
+                optimizer.state_dict(),
+                os.path.join(output_dir,
+                             f'{model_name}_epoch_{epoch}_model.pdopt'))

@@ -16,7 +16,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-import copy
 import paddle
 
 __all__ = ['build_optimizer']
@@ -25,7 +24,7 @@ __all__ = ['build_optimizer']
 def build_lr_scheduler(lr_config, epochs, step_each_epoch):
     if isinstance(lr_config, float):
         return lr_config
-    from . import learning_rate
+    from ppad.optimizer import learning_rate
     lr_config.update({'epochs': epochs, 'step_each_epoch': step_each_epoch})
     lr_name = lr_config.pop('name', 'Const')
     lr = getattr(learning_rate, lr_name)(**lr_config)()

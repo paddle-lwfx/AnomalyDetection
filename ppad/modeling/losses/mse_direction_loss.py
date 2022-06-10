@@ -1,6 +1,6 @@
 import paddle
 from paddle import nn
-from ..registry import LOSSES
+from ppad.modeling.registry import LOSSES
 
 
 @LOSSES.register()

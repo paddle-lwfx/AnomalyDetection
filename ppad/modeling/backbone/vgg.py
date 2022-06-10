@@ -6,20 +6,14 @@ from ppad.utils import load_pretrained_params
 from ppad.modeling.registry import BACKBONES
 from ppad.modeling.param_init import xavier_uniform_
 
-
-__all__ = [
-    'VGG', 'VGG16'
-]
+__all__ = ['VGG', 'VGG16']
 
 
 class VGG(nn.Layer):
-
-    def __init__(
-        self,
-        features: nn.Layer,
-        num_classes: int = 1000,
-        init_weights: bool = True
-    ) -> None:
+    def __init__(self,
+                 features: nn.Layer,
+                 num_classes: int=1000,
+                 init_weights: bool=True) -> None:
         super(VGG, self).__init__()
         self.features = features
         self.avgpool = nn.AdaptiveAvgPool2D((7, 7))
@@ -30,8 +24,7 @@ class VGG(nn.Layer):
             nn.Linear(4096, 4096),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(4096, num_classes),
-        )
+            nn.Linear(4096, num_classes), )
         if init_weights:
             self._initialize_weights()
 
@@ -46,7 +39,8 @@ class VGG(nn.Layer):
         pass
 
 
-def make_layers(cfg: List[Union[str, int]], batch_norm: bool = False) -> nn.Sequential:
+def make_layers(cfg: List[Union[str, int]],
+                batch_norm: bool=False) -> nn.Sequential:
     layers: List[nn.Layer] = []
     in_channels = 3
     for v in cfg:
@@ -65,13 +59,25 @@ def make_layers(cfg: List[Union[str, int]], batch_norm: bool = False) -> nn.Sequ
 
 cfgs: Dict[str, List[Union[str, int]]] = {
     'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
-    'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
+    'B':
+    [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
+    'D': [
+        64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M',
+        512, 512, 512, 'M'
+    ],
+    'E': [
+        64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512,
+        512, 'M', 512, 512, 512, 512, 'M'
+    ],
 }
 
 
-def _vgg(arch: str, cfg: str, batch_norm: bool, pretrained: str, progress: bool, **kwargs: Any) -> VGG:
+def _vgg(arch: str,
+         cfg: str,
+         batch_norm: bool,
+         pretrained: str,
+         progress: bool,
+         **kwargs: Any) -> VGG:
     if pretrained:
         kwargs['init_weights'] = False
     model = VGG(make_layers(cfgs[cfg], batch_norm=batch_norm), **kwargs)
@@ -108,7 +114,10 @@ class KDADStudentVGG(nn.Layer):
 
     def __init__(self):
         super(KDADStudentVGG, self).__init__()
-        cfg = [16, 16, 'M', 16, 128, 'M', 16, 16, 256, 'M', 16, 16, 512, 'M', 16, 16, 512, 'M']
+        cfg = [
+            16, 16, 'M', 16, 128, 'M', 16, 16, 256, 'M', 16, 16, 512, 'M', 16,
+            16, 512, 'M'
+        ]
         self.features = self.make_layers(cfg, use_bias=False, batch_norm=True)
 
         # placeholder for the gradients
@@ -125,7 +134,12 @@ class KDADStudentVGG(nn.Layer):
             elif cfg[i] == 'M':
                 layers += [nn.MaxPool2D(kernel_size=2, stride=2)]
             else:
-                conv2d = nn.Conv2D(in_channels, cfg[i], kernel_size=3, padding=1, bias_attr=use_bias)
+                conv2d = nn.Conv2D(
+                    in_channels,
+                    cfg[i],
+                    kernel_size=3,
+                    padding=1,
+                    bias_attr=use_bias)
                 xavier_uniform_(conv2d.weight)
                 if batch_norm and cfg[i + 1] != 'M':
                     layers += [conv2d, nn.BatchNorm2D(cfg[i]), nn.ReLU()]

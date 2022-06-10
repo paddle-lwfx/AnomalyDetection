@@ -109,8 +109,8 @@ def override(dl, ks, v):
             dl[ks[0]] = str2num(v)
         else:
             assert ks[0] in dl, (
-                '({}) doesn\'t exist in {}, a new dict field is invalid'.format(
-                    ks[0], dl))
+                '({}) doesn\'t exist in {}, a new dict field is invalid'.
+                format(ks[0], dl))
             override(dl[ks[0]], ks[1:], v)
 
 
@@ -208,7 +208,8 @@ def get_config(fname, overrides=None, show=True):
     """
     Read config from file
     """
-    assert os.path.exists(fname), ('config file({}) is not exist'.format(fname))
+    assert os.path.exists(fname), (
+        'config file({}) is not exist'.format(fname))
     config = parse_config(fname)
     override_config(config, overrides)
     if show:

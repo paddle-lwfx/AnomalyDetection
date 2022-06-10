@@ -18,4 +18,3 @@ BACKBONES = Registry('backbone')
 HEADS = Registry('head')
 FRAMEWORK = Registry('framework')
 LOSSES = Registry('loss')
-

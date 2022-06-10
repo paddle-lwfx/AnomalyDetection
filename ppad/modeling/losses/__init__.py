@@ -1,1 +1,1 @@
-from .mse_direction_loss import MseDirectionLoss
+from ppad.modeling.losses.mse_direction_loss import MseDirectionLoss
