@@ -13,7 +13,7 @@ from ppad.optimizer import build_optimizer
 def train_model(cfg, validate=False):
     logger = get_logger()
     model_name = cfg.Global.model_name
-    output_dir = cfg.get("output_dir", f"./output/{model_name}")
+    output_dir = cfg.Global.get("output_dir", f"./output/{model_name}")
     epochs = cfg.Global.epochs
 
     model = build_model(cfg.Model)
@@ -57,7 +57,7 @@ def train_model(cfg, validate=False):
             record_list['batch_time'].update(time.time() - tic)
             record_list['loss'].update(loss, batch_size)
 
-            if i % cfg.get("log_interval", 10) == 0:
+            if i % cfg.Global.get("log_interval", 10) == 0:
                 ips = "ips: {:.5f} instance/sec.".format(
                     batch_size / record_list["batch_time"].val)
                 log_batch(record_list, i, epoch + 1, epochs, "train", ips)
@@ -69,8 +69,8 @@ def train_model(cfg, validate=False):
             record_list["batch_time"].sum)
         log_epoch(record_list, epoch + 1, "train", ips)
 
-        if validate and (epoch % cfg.get("val_interval", 1) == 0 or
-                         epoch == cfg.epochs - 1):
+        if validate and (epoch % cfg.Global.get("val_interval", 1) == 0 or
+                         epoch == epochs - 1):
             if cfg.Model.framework in ['KDAD']:
                 eval_res = model.detection_test(eval_loader, cfg)
                 logger.info(f"[Eval] epoch:{epoch} AUC: {eval_res}")
@@ -84,7 +84,8 @@ def train_model(cfg, validate=False):
                                          f'{model_name}_best_model.pdopt'))
                 logger.info("Already save the best model")
 
-        if epoch % cfg.get("save_interval", 1) == 0 or epoch == cfg.epochs - 1:
+        if epoch % cfg.Global.get("save_interval",
+                                  1) == 0 or epoch == epochs - 1:
             paddle.save(
                 model.state_dict(),
                 os.path.join(output_dir,
