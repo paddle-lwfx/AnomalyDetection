@@ -124,7 +124,8 @@ def save_model(model,
                logger,
                config,
                prefix="ppad",
-               metric_dict=None**kwargs):
+               metric_dict=None,
+               **kwargs):
     """
     save model to the target path
     """

@@ -1,0 +1,45 @@
+Global:
+    epochs: 601
+    model_name: "KDAD"
+    val_interval: 10
+    save_interval: 10
+    direction_only: False
+Model:
+    framework: "KDAD"
+    teacher_model:
+        name: "VGG16"
+        pretrained: "./vgg16"
+    student_model:
+        name: "KDADStudentVGG"
+    loss_cfg:
+        name: "MseDirectionLoss"
+        lamda: 0.5
+
+Dataset:
+    dataset_name: "mvtec"
+    batch_size: 64
+    num_worker: 8
+    normal_class: "capsule"
+    train:
+        name: "ImageFolder"
+        dataset_root: "data/MVTec/capsule/train"
+        transform:
+            - Resize:
+                  size: [ 128, 128 ]
+                  interpolation: "bilinear"
+            - ToTensor:
+    eval:
+        name: "ImageFolder"
+        dataset_root: "data/MVTec/capsule/test"
+        transform:
+            - Resize:
+                  size: [ 128, 128 ]
+                  interpolation: "bilinear"
+            - ToTensor:
+
+Optimizer: #OPTIMIZER field
+    name: "Adam"
+    beta1: 0.9
+    beta2: 0.999
+    lr: 1e-3
+
